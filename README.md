@@ -46,7 +46,7 @@ In the timer you can do this code, for example, every 100 milliseconds
  
  // in the timer
  val currentMaxAmplitude = getMediaRecorder().getMaxAmplitude();
- audioRecordView.update(x); //redraw view
+ audioRecordView.update(currentMaxAmplitude); //redraw view
 ```
 
 At the end or before reuse
