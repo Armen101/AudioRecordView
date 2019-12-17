@@ -28,6 +28,7 @@ in XML
 
 ```xml
 <com.visualizer.amplitude.AudioRecordView
+        android:id="@+id/audioRecordView"
         android:layout_width="200dp"
         android:layout_height="50dp"
         app:chunkColor="@color/app_style_blue"
@@ -41,6 +42,9 @@ Drawing
 In the timer you can do this code, for example, every 100 milliseconds
 
 ```java
+ val audioRecordView: AudioRecordView = findViewById(R.id.audioRecordView)
+ 
+ // in the timer
  val currentMaxAmplitude = getMediaRecorder().getMaxAmplitude();
  audioRecordView.update(x); //redraw view
 ```
