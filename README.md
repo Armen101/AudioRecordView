@@ -2,13 +2,19 @@
 
 *Audio visualizer that can be used during sound recording*
 
-Dependencies
-```
-repositories {
-  mavenCentral()
-  google()
-}
+**How to include?**
 
+Add the repository to your project build.gradle:
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+And add the library to your module build.gradle:
+```
 dependencies {
   implementation 'com.github.Armen101:AudioRecordView:1.0.0'
 }
