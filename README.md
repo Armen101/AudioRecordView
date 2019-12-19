@@ -1,6 +1,8 @@
-**AudioRecordView**
+AudioRecordView
 
 *Audio visualizer that can be used during sound recording*
+
+<a href="https://imgflip.com/gif/3jz8y7"><img src="https://i.imgflip.com/3jz8y7.gif" title="made at imgflip.com"/></a>
 
 **How to include?**
 
@@ -51,13 +53,13 @@ In the timer you can do this code, for example, every 100 milliseconds
  val audioRecordView: AudioRecordView = findViewById(R.id.audioRecordView)
  
  // in the timer
- val currentMaxAmplitude = getMediaRecorder().getMaxAmplitude();
- audioRecordView.update(currentMaxAmplitude); //redraw view
+ val currentMaxAmplitude = getMediaRecorder().getMaxAmplitude()
+ audioRecordView.update(currentMaxAmplitude)   //redraw view
 ```
 
 At the end or before reuse
 ```
-audioRecordView.recreate();
+audioRecordView.recreate()
 ```
 **Compatibility**
 
