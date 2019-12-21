@@ -47,9 +47,9 @@ in XML
 ```
 Drawing
 
-In the timer you can do this code, for example, every 100 milliseconds
+You can execute this code in a timer, for example, every 50 milliseconds
 
-```java
+```kotlin
  val audioRecordView: AudioRecordView = findViewById(R.id.audioRecordView)
  
  // in the timer
