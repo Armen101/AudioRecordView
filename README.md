@@ -2,7 +2,7 @@ AudioRecordView
 
 *Audio visualizer that can be used during sound recording*
 
-<a href="https://imgflip.com/gif/3jz8y7"><img src="https://i.imgflip.com/3jz8y7.gif" title="made at imgflip.com"/></a>
+<a href="https://imgflip.com/gif/3keacb"><img src="https://i.imgflip.com/3keacb.gif" title="made at imgflip.com"/></a>
 
 **How to include?**
 
