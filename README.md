@@ -65,5 +65,9 @@ audioRecordView.recreate()
 
 Minimum Android SDK: AudioRecordView requires a minimum API level of 16.
 
+**License**
+
+Apache 2.0. See the [LICENSE](https://github.com/Armen101/AudioRecordView/blob/master/LICENSE). file for details.
+
 **Author**
 Armen Gevorgyan
