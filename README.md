@@ -39,6 +39,8 @@ in XML
         android:id="@+id/audioRecordView"
         android:layout_width="200dp"
         android:layout_height="50dp"
+        app:chunkAlignTo="bottom"                                  
+        app:chunkRoundedCorners="true"
         app:chunkColor="@color/app_style_blue"
         app:chunkSpace="1dp"
         app:chunkWidth="2dp"
@@ -47,7 +49,7 @@ in XML
 ```
 Drawing
 
-You can execute this code in a timer, for example, every 50 milliseconds
+You can execute this code in a timer, for example, every 100 milliseconds
 
 ```kotlin
  val audioRecordView: AudioRecordView = findViewById(R.id.audioRecordView)
@@ -64,6 +66,12 @@ audioRecordView.recreate()
 **Compatibility**
 
 Minimum Android SDK: AudioRecordView requires a minimum API level of 16.
+
+**Also you can see**
+
+[Sample project](https://github.com/Armen101/AudioRecordViewSample) in github
+
+[Tutorial](https://medium.com/@gevorgyanweb/audiorecordview-or-simplest-and-best-audio-visualizer-for-android-4fcec59608) in Medium
 
 **License**
 
