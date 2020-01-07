@@ -18,7 +18,6 @@ class AudioRecordView : View {
 
     private val chunkPaint = Paint()
 
-    private var lastFFT = 0f
     private var usageWidth = 0.0
     private var chunkHeights = ArrayList<Float>()
     private var chunkWidths = ArrayList<Double>()
@@ -88,7 +87,6 @@ class AudioRecordView : View {
     }
 
     fun recreate() {
-        lastFFT = 0f
         usageWidth = 0.0
         chunkWidths = ArrayList()
         chunkHeights = ArrayList()
@@ -96,16 +94,22 @@ class AudioRecordView : View {
     }
 
     fun update(fft: Int) {
-        this.lastFFT = fft.toFloat()
-        invalidate()
+        handleNewFFT(fft)
+        invalidate() // call to the onDraw function
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        drawAllChunks(canvas)
+    }
+
+    private fun handleNewFFT(fft: Int) {
+        if (fft == 0) {
+            return
+        }
 
         val chunkHorizontalScale = (chunkWidth + chunkSpace).toDouble()
         val maxChunkCount = width / chunkHorizontalScale
-        val verticalCenter = (height / 2).toFloat()
 
         if (chunkHeights.size >= maxChunkCount) {
             chunkHeights.removeAt(0)
@@ -130,11 +134,7 @@ class AudioRecordView : View {
             return
         }
 
-        if (lastFFT == 0f) {
-            return
-        }
-
-        var fftPoint = lastFFT / point
+        var fftPoint = fft / point
 
         fftPoint += chunkMinHeight
 
@@ -145,6 +145,10 @@ class AudioRecordView : View {
         }
 
         chunkHeights.add(chunkHeights.size, fftPoint)
+    }
+
+    private fun drawAllChunks(canvas: Canvas) {
+        val verticalCenter = (height / 2).toFloat()
 
         for (i in 0 until chunkHeights.size - 1) {
             val startX = chunkWidths[i].toFloat()
