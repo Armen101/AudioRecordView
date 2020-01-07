@@ -1,7 +1,6 @@
 package com.visualizer.amplitude
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -12,30 +11,29 @@ import java.util.*
 
 class AudioRecordView : View {
 
-    private val density = Resources.getSystem().displayMetrics.density
     private val maxReportableAmp = 22760f //effective size,  max fft = 32760
     private val uninitialized = 0f
 
     private val chunkPaint = Paint()
 
-    private var usageWidth = 0.0
+    private var usageWidth = 0f
     private var chunkHeights = ArrayList<Float>()
-    private var chunkWidths = ArrayList<Double>()
-    private var topBottomPadding = 10 * density
+    private var chunkWidths = ArrayList<Float>()
+    private var topBottomPadding = 10.dp()
 
     var chunkColor = Color.RED
         set(value) {
             chunkPaint.color = value
             field = value
         }
-    var chunkWidth = 2 * density
+    var chunkWidth = 2.dp()
         set(value) {
             chunkPaint.strokeWidth = value
             field = value
         }
-    var chunkSpace = 1 * density
+    var chunkSpace = 1.dp()
     var chunkMaxHeight = uninitialized
-    var chunkMinHeight = 3 * density  // recommended size > 10 dp
+    var chunkMinHeight = 3.dp()  // recommended size > 10 dp
     var chunkRoundedCorners = false
         set(value) {
             if (value) {
@@ -87,9 +85,9 @@ class AudioRecordView : View {
     }
 
     fun recreate() {
-        usageWidth = 0.0
-        chunkWidths = ArrayList()
-        chunkHeights = ArrayList()
+        usageWidth = 0f
+        chunkWidths.clear()
+        chunkHeights.clear()
         invalidate()
     }
 
@@ -108,7 +106,7 @@ class AudioRecordView : View {
             return
         }
 
-        val chunkHorizontalScale = (chunkWidth + chunkSpace).toDouble()
+        val chunkHorizontalScale = chunkWidth + chunkSpace
         val maxChunkCount = width / chunkHorizontalScale
 
         if (chunkHeights.size >= maxChunkCount) {
@@ -151,12 +149,11 @@ class AudioRecordView : View {
         val verticalCenter = (height / 2).toFloat()
 
         for (i in 0 until chunkHeights.size - 1) {
-            val startX = chunkWidths[i].toFloat()
-            val stopX = chunkWidths[i].toFloat()
+            val chunkX = chunkWidths[i]
             val startY = verticalCenter - chunkHeights[i] / 2
             val stopY = verticalCenter + chunkHeights[i] / 2
 
-            canvas.drawLine(startX, startY, stopX, stopY, chunkPaint)
+            canvas.drawLine(chunkX, startY, chunkX, stopY, chunkPaint)
         }
     }
 }
