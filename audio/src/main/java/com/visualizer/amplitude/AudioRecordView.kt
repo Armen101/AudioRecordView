@@ -18,8 +18,8 @@ class AudioRecordView : View {
 
     private val chunkPaint = Paint()
 
-    private var lastFFT = 0.toFloat()
-    private var usageWidth = 0.toDouble()
+    private var lastFFT = 0f
+    private var usageWidth = 0.0
     private var chunkHeights = ArrayList<Float>()
     private var chunkWidths = ArrayList<Double>()
     private var topBottomPadding = 10 * density
@@ -104,10 +104,10 @@ class AudioRecordView : View {
         super.onDraw(canvas)
 
         val chunkHorizontalScale = (chunkWidth + chunkSpace).toDouble()
-        val maxLineCount = width / chunkHorizontalScale
-        val centerView = (height / 2).toFloat()
+        val maxChunkCount = width / chunkHorizontalScale
+        val verticalCenter = (height / 2).toFloat()
 
-        if (chunkWidths.size >= maxLineCount) {
+        if (chunkHeights.size >= maxChunkCount) {
             chunkHeights.removeAt(0)
         } else {
             usageWidth += chunkHorizontalScale
@@ -149,8 +149,8 @@ class AudioRecordView : View {
         for (i in 0 until chunkHeights.size - 1) {
             val startX = chunkWidths[i].toFloat()
             val stopX = chunkWidths[i].toFloat()
-            val startY = centerView - chunkHeights[i] / 2
-            val stopY = centerView + chunkHeights[i] / 2
+            val startY = verticalCenter - chunkHeights[i] / 2
+            val stopY = verticalCenter + chunkHeights[i] / 2
 
             canvas.drawLine(startX, startY, stopX, stopY, chunkPaint)
         }
