@@ -11,15 +11,21 @@ import java.util.*
 
 class AudioRecordView : View {
 
+    enum class AlignTo(var value: Int){
+        CENTER(1),
+        BOTTOM(2)
+    }
+
     private val maxReportableAmp = 22760f //effective size,  max fft = 32760
     private val uninitialized = 0f
+    var chunkAlignTo = AlignTo.CENTER
 
     private val chunkPaint = Paint()
 
     private var usageWidth = 0f
     private var chunkHeights = ArrayList<Float>()
     private var chunkWidths = ArrayList<Float>()
-    private var topBottomPadding = 10.dp()
+    private var topBottomPadding = 6.dp()
 
     var chunkColor = Color.RED
         set(value) {
@@ -58,6 +64,23 @@ class AudioRecordView : View {
         init(attrs)
     }
 
+    fun recreate() {
+        usageWidth = 0f
+        chunkWidths.clear()
+        chunkHeights.clear()
+        invalidate()
+    }
+
+    fun update(fft: Int) {
+        handleNewFFT(fft)
+        invalidate() // call to the onDraw function
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        drawChunks(canvas)
+    }
+
     private fun init() {
         chunkPaint.strokeWidth = chunkWidth
         chunkPaint.color = chunkColor
@@ -75,6 +98,10 @@ class AudioRecordView : View {
                 chunkRoundedCorners = getBoolean(R.styleable.AudioRecordView_chunkRoundedCorners, chunkRoundedCorners)
                 chunkWidth = getDimension(R.styleable.AudioRecordView_chunkWidth, chunkWidth)
                 chunkColor = getColor(R.styleable.AudioRecordView_chunkColor, chunkColor)
+                chunkAlignTo = when (getInt(R.styleable.AudioRecordView_chunkAlignTo, chunkAlignTo.ordinal)) {
+                        AlignTo.BOTTOM.value -> AlignTo.BOTTOM
+                        else -> AlignTo.CENTER
+                    }
 
                 setWillNotDraw(false)
                 chunkPaint.isAntiAlias = true
@@ -82,23 +109,6 @@ class AudioRecordView : View {
                 recycle()
             }
         }
-    }
-
-    fun recreate() {
-        usageWidth = 0f
-        chunkWidths.clear()
-        chunkHeights.clear()
-        invalidate()
-    }
-
-    fun update(fft: Int) {
-        handleNewFFT(fft)
-        invalidate() // call to the onDraw function
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-        drawAllChunks(canvas)
     }
 
     private fun handleNewFFT(fft: Int) {
@@ -145,13 +155,29 @@ class AudioRecordView : View {
         chunkHeights.add(chunkHeights.size, fftPoint)
     }
 
-    private fun drawAllChunks(canvas: Canvas) {
-        val verticalCenter = (height / 2).toFloat()
+    private fun drawChunks(canvas: Canvas) {
+        when (chunkAlignTo) {
+            AlignTo.BOTTOM -> drawAlignBottom(canvas)
+            else -> drawAlignCenter(canvas)
+        }
+    }
 
+    private fun drawAlignCenter(canvas: Canvas) {
+        val verticalCenter = height / 2
         for (i in 0 until chunkHeights.size - 1) {
             val chunkX = chunkWidths[i]
             val startY = verticalCenter - chunkHeights[i] / 2
             val stopY = verticalCenter + chunkHeights[i] / 2
+
+            canvas.drawLine(chunkX, startY, chunkX, stopY, chunkPaint)
+        }
+    }
+
+    private fun drawAlignBottom(canvas: Canvas) {
+        for (i in 0 until chunkHeights.size - 1) {
+            val chunkX = chunkWidths[i]
+            val startY = height.toFloat() //bottom
+            val stopY = height.toFloat() - chunkHeights[i]
 
             canvas.drawLine(chunkX, startY, chunkX, stopY, chunkPaint)
         }
