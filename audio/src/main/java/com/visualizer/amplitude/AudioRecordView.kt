@@ -25,10 +25,21 @@ class AudioRecordView : View {
     private var topBottomPadding = 10 * density
 
     var chunkColor = Color.RED
+        set(value) {
+            chunkPaint.color = value
+            field = value
+        }
     var chunkWidth = 2 * density
     var chunkSpace = 1 * density
     var chunkMaxHeight = uninitialized
     var chunkMinHeight = 3 * density  // recommended size > 10 dp
+    var chunkRoundedCorners = false
+        set(value) {
+            if (value) {
+                chunkPaint.strokeCap = Paint.Cap.ROUND
+            }
+            field = value
+        }
 
     constructor(context: Context) : super(context) {
         init()
@@ -38,7 +49,11 @@ class AudioRecordView : View {
         init(attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
         init(attrs)
     }
 
@@ -56,12 +71,12 @@ class AudioRecordView : View {
                 chunkSpace = getDimension(R.styleable.AudioRecordView_chunkSpace, chunkSpace)
                 chunkMaxHeight = getDimension(R.styleable.AudioRecordView_chunkMaxHeight, chunkMaxHeight)
                 chunkMinHeight = getDimension(R.styleable.AudioRecordView_chunkMinHeight, chunkMinHeight)
+                chunkRoundedCorners = getBoolean(R.styleable.AudioRecordView_chunkRoundedCorners, chunkRoundedCorners)
 
                 chunkWidth = getDimension(R.styleable.AudioRecordView_chunkWidth, chunkWidth)
                 chunkPaint.strokeWidth = chunkWidth
 
                 chunkColor = getColor(R.styleable.AudioRecordView_chunkColor, chunkColor)
-                chunkPaint.color = chunkColor
 
                 setWillNotDraw(false)
                 chunkPaint.isAntiAlias = true

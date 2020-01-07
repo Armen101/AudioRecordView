@@ -8,6 +8,7 @@
         <attr name="chunkMinHeight" format="dimension" />
         <attr name="chunkSpace" format="dimension" />
         <attr name="chunkColor" format="color" />
+        <attr name="chunkRoundedCorners" format="boolean" />
 
     </declare-styleable>
 
