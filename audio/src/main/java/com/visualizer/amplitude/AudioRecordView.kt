@@ -30,6 +30,10 @@ class AudioRecordView : View {
             field = value
         }
     var chunkWidth = 2 * density
+        set(value) {
+            chunkPaint.strokeWidth = value
+            field = value
+        }
     var chunkSpace = 1 * density
     var chunkMaxHeight = uninitialized
     var chunkMinHeight = 3 * density  // recommended size > 10 dp
@@ -72,10 +76,7 @@ class AudioRecordView : View {
                 chunkMaxHeight = getDimension(R.styleable.AudioRecordView_chunkMaxHeight, chunkMaxHeight)
                 chunkMinHeight = getDimension(R.styleable.AudioRecordView_chunkMinHeight, chunkMinHeight)
                 chunkRoundedCorners = getBoolean(R.styleable.AudioRecordView_chunkRoundedCorners, chunkRoundedCorners)
-
                 chunkWidth = getDimension(R.styleable.AudioRecordView_chunkWidth, chunkWidth)
-                chunkPaint.strokeWidth = chunkWidth
-
                 chunkColor = getColor(R.styleable.AudioRecordView_chunkColor, chunkColor)
 
                 setWillNotDraw(false)
