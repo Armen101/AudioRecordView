@@ -1,4 +1,4 @@
-AudioRecordView
+**AudioRecordView**
 
 *Audio visualizer that can be used during sound recording*
 
