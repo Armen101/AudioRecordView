@@ -44,6 +44,8 @@ class AudioRecordView : View {
         set(value) {
             if (value) {
                 chunkPaint.strokeCap = Paint.Cap.ROUND
+            } else {
+                chunkPaint.strokeCap = Paint.Cap.BUTT
             }
             field = value
         }
@@ -176,8 +178,8 @@ class AudioRecordView : View {
     private fun drawAlignBottom(canvas: Canvas) {
         for (i in 0 until chunkHeights.size - 1) {
             val chunkX = chunkWidths[i]
-            val startY = height.toFloat() //bottom
-            val stopY = height.toFloat() - chunkHeights[i]
+            val startY = height.toFloat() - topBottomPadding
+            val stopY = startY - chunkHeights[i]
 
             canvas.drawLine(chunkX, startY, chunkX, stopY, chunkPaint)
         }
