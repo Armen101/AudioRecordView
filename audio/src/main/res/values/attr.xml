@@ -9,6 +9,10 @@
         <attr name="chunkSpace" format="dimension" />
         <attr name="chunkColor" format="color" />
         <attr name="chunkRoundedCorners" format="boolean" />
+        <attr name="chunkAlignTo" format="enum">
+            <enum name="center" value="1" />
+            <enum name="bottom" value="2" />
+        </attr>
 
     </declare-styleable>
 
