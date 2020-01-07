@@ -18,7 +18,7 @@ allprojects {
 And add the library to your module build.gradle:
 ```
 dependencies {
-  implementation 'com.github.Armen101:AudioRecordView:1.0.0'
+  implementation 'com.github.Armen101:AudioRecordView:1.0.1'
 }
 ```
 Or Maven
