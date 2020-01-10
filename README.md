@@ -37,14 +37,14 @@ in XML
 ```xml
 <com.visualizer.amplitude.AudioRecordView
         android:id="@+id/audioRecordView"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
+        android:layout_width="256dp"
+        android:layout_height="64dp"
         app:chunkAlignTo="bottom"                                  
         app:chunkRoundedCorners="true"
         app:chunkColor="@color/app_style_blue"
         app:chunkSpace="1dp"
         app:chunkWidth="2dp"
-        app:chunkMaxHeight="45dp"
+        app:chunkMaxHeight="48dp"
         app:chunkMinHeight="2dp"/>
 ```
 Drawing
