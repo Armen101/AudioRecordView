@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import java.util.*
 
@@ -129,9 +128,9 @@ class AudioRecordView : View {
         }
 
         if (chunkMaxHeight == uninitialized) {
-            chunkMaxHeight = height - topBottomPadding * 2
-        } else if (chunkMaxHeight > height - topBottomPadding * 2) {
-            chunkMaxHeight = height - topBottomPadding * 2
+            chunkMaxHeight = height - (topBottomPadding * 2)
+        } else if (chunkMaxHeight > height - (topBottomPadding * 2)) {
+            chunkMaxHeight = height - (topBottomPadding * 2)
         }
 
         val verticalDrawScale = chunkMaxHeight - chunkMinHeight
@@ -145,6 +144,11 @@ class AudioRecordView : View {
         }
 
         var fftPoint = fft / point
+
+        if (chunkHeights.isNotEmpty()) {
+            val prevFftWithoutAdditionalSize = chunkHeights.last() - chunkMinHeight
+            fftPoint = fftPoint.softTransition(prevFftWithoutAdditionalSize, 2.5f, 3f)
+        }
 
         fftPoint += chunkMinHeight
 
