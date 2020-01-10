@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import java.util.*
 
@@ -120,8 +121,7 @@ class AudioRecordView : View {
 
         val chunkHorizontalScale = chunkWidth + chunkSpace
         val maxChunkCount = width / chunkHorizontalScale
-
-        if (chunkHeights.size >= maxChunkCount) {
+        if (chunkHeights.isNotEmpty() && chunkHeights.size >= maxChunkCount) {
             chunkHeights.removeAt(0)
         } else {
             usageWidth += chunkHorizontalScale
