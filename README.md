@@ -26,7 +26,7 @@ Or Maven
 <dependency>
   <groupId>com.github.Armen101</groupId>
   <artifactId>AudioRecordView</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
