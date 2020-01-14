@@ -18,7 +18,7 @@ allprojects {
 And add the library to your module build.gradle:
 ```
 dependencies {
-  implementation 'com.github.Armen101:AudioRecordView:1.0.1'
+  implementation 'com.github.Armen101:AudioRecordView:1.0.2'
 }
 ```
 Or Maven
@@ -26,7 +26,7 @@ Or Maven
 <dependency>
   <groupId>com.github.Armen101</groupId>
   <artifactId>AudioRecordView</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
 </dependency>
 ```
 
@@ -41,6 +41,7 @@ in XML
         android:layout_height="64dp"
         app:chunkAlignTo="bottom"                                  
         app:chunkRoundedCorners="true"
+        app:chunkSoftTransition="true"                                  
         app:chunkColor="@color/app_style_blue"
         app:chunkSpace="1dp"
         app:chunkWidth="2dp"
