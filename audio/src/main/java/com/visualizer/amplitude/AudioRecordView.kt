@@ -9,7 +9,9 @@ import android.view.View
 import java.util.*
 
 
-class AudioRecordView : View {
+class AudioRecordView @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : View(context, attrs, defStyleAttr) {
 
     enum class AlignTo(var value: Int) {
         CENTER(1),
@@ -52,20 +54,8 @@ class AudioRecordView : View {
             field = value
         }
 
-    constructor(context: Context) : super(context) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(attrs)
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        init(attrs)
+    init {
+        attrs?.let { init(it) } ?: run { init() }
     }
 
     fun recreate() {
