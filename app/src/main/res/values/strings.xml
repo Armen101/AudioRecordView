@@ -1,6 +1,3 @@
 <resources>
     <string name="app_name">AudioRecordView</string>
-    <string name="record">record</string>
-    <string name="stop">stop</string>
-    <string name="play">play</string>
 </resources>
