@@ -5,7 +5,9 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
+import java.lang.Exception
 import java.util.*
 
 
@@ -66,9 +68,13 @@ class AudioRecordView @JvmOverloads constructor(
     }
 
     fun update(fft: Int) {
-        handleNewFFT(fft)
-        invalidate() // call to the onDraw function
-        lastUpdateTime = System.currentTimeMillis()
+        try {
+            handleNewFFT(fft)
+            invalidate() // call to the onDraw function
+            lastUpdateTime = System.currentTimeMillis()
+        } catch (e: Exception) {
+            Log.e(AudioRecordView::class.simpleName, e.message ?: e.javaClass.simpleName)
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
