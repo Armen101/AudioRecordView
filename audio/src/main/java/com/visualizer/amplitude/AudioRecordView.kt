@@ -67,7 +67,15 @@ class AudioRecordView @JvmOverloads constructor(
         invalidate()
     }
 
+    /**
+     * Call this function when you need to add a new chunk
+     * @param fft Used to draw the height of each chunk.
+     */
     fun update(fft: Int) {
+        if (height == 0) {
+            Log.w(LOG_TAG, "You must call the update fun when the view is displayed")
+            return
+        }
         try {
             handleNewFFT(fft)
             invalidate() // call to the onDraw function
@@ -207,5 +215,11 @@ class AudioRecordView @JvmOverloads constructor(
 
             canvas.drawLine(chunkX, startY, chunkX, stopY, chunkPaint)
         }
+    }
+
+    companion object {
+
+        private val LOG_TAG = AudioRecordView::class.java.simpleName
+
     }
 }
