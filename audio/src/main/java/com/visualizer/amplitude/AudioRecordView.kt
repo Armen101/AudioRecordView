@@ -20,9 +20,15 @@ class AudioRecordView @JvmOverloads constructor(
         BOTTOM(2)
     }
 
+    enum class Direction(var value: Int) {
+        RightToLeft(1),
+        LeftToRight(2)
+    }
+
     private val maxReportableAmp = 22760f //effective size,  max fft = 32760
     private val uninitialized = 0f
     var chunkAlignTo = AlignTo.CENTER
+    var direction = Direction.LeftToRight
 
     private val chunkPaint = Paint()
     private var lastUpdateTime = 0L
@@ -111,9 +117,14 @@ class AudioRecordView @JvmOverloads constructor(
                 chunkWidth = getDimension(R.styleable.AudioRecordView_chunkWidth, chunkWidth)
                 chunkColor = getColor(R.styleable.AudioRecordView_chunkColor, chunkColor)
                 chunkAlignTo =
-                    when (getInt(R.styleable.AudioRecordView_chunkAlignTo, chunkAlignTo.ordinal)) {
+                    when (getInt(R.styleable.AudioRecordView_chunkAlignTo, chunkAlignTo.value)) {
                         AlignTo.BOTTOM.value -> AlignTo.BOTTOM
                         else -> AlignTo.CENTER
+                    }
+                direction =
+                    when (getInt(R.styleable.AudioRecordView_direction, direction.value)) {
+                        Direction.RightToLeft.value -> Direction.RightToLeft
+                        else -> Direction.LeftToRight
                     }
 
                 chunkSoftTransition =
@@ -138,7 +149,7 @@ class AudioRecordView @JvmOverloads constructor(
             chunkHeights.removeAt(0)
         } else {
             usageWidth += chunkHorizontalScale
-            chunkWidths.add(chunkWidths.size, usageWidth)
+            chunkWidths.add(usageWidth)
         }
 
         if (chunkMaxHeight == uninitialized) {
@@ -199,7 +210,7 @@ class AudioRecordView @JvmOverloads constructor(
     private fun drawAlignCenter(canvas: Canvas) {
         val verticalCenter = height / 2
         for (i in 0 until chunkHeights.size - 1) {
-            val chunkX = chunkWidths[i]
+            val chunkX = getChunkX(i)
             val startY = verticalCenter - chunkHeights[i] / 2
             val stopY = verticalCenter + chunkHeights[i] / 2
 
@@ -209,12 +220,18 @@ class AudioRecordView @JvmOverloads constructor(
 
     private fun drawAlignBottom(canvas: Canvas) {
         for (i in 0 until chunkHeights.size - 1) {
-            val chunkX = chunkWidths[i]
+            val chunkX = getChunkX(i)
             val startY = height.toFloat() - topBottomPadding
             val stopY = startY - chunkHeights[i]
 
             canvas.drawLine(chunkX, startY, chunkX, stopY, chunkPaint)
         }
+    }
+
+    private fun getChunkX(index: Int) = if (direction == Direction.RightToLeft) {
+        width - chunkWidths[index]
+    } else {
+        chunkWidths[index]
     }
 
     companion object {
