@@ -93,6 +93,13 @@ open class MainActivity : AppCompatActivity() {
         switchSoftTransition.setOnCheckedChangeListener { _, isChecked ->
             audioRecordView.chunkSoftTransition = isChecked
         }
+        switchDirection.setOnCheckedChangeListener { _, isChecked ->
+            audioRecordView.direction = if (isChecked) {
+                AudioRecordView.Direction.RightToLeft
+            } else {
+                AudioRecordView.Direction.LeftToRight
+            }
+        }
     }
 
     private fun startDrawing() {
