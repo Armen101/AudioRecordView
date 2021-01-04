@@ -193,7 +193,6 @@ class AudioRecordView @JvmOverloads constructor(
             in 0..50 -> 1.6f
             in 50..100 -> 2.2f
             in 100..150 -> 2.8f
-            in 100..150 -> 3.4f
             in 150..200 -> 4.2f
             in 200..500 -> 4.8f
             else -> 5.4f
