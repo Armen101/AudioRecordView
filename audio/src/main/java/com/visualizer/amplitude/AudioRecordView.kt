@@ -174,7 +174,7 @@ class AudioRecordView @JvmOverloads constructor(
             fftPoint = chunkMinHeight
         }
 
-        chunkHeights.add(chunkHeights.size, fftPoint)
+        chunkHeights.add(fftPoint)
     }
 
     private fun calculateScaleFactor(updateTimeInterval: Long): Float {

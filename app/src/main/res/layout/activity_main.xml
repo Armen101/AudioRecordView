@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/startRecording"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="100dp"
+        android:text="@string/start_recording"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginLeft="40dp" />
+
+    <Button
+        android:id="@+id/stopRecording"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/startRecording"
+        android:layout_marginEnd="40dp"
+        android:text="@string/stop_recording"
+        app:layout_constraintBottom_toBottomOf="@+id/startRecording"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginRight="40dp" />
+
+    <com.visualizer.amplitude.AudioRecordView
+        android:id="@+id/audioRecordView"
+        android:layout_width="256dp"
+        android:layout_height="64dp"
+        app:chunkAlignTo="bottom"
+        app:chunkColor="#2991E6"
+        app:chunkMaxHeight="60dp"
+        app:chunkMinHeight="2dp"
+        app:chunkRoundedCorners="false"
+        app:chunkSoftTransition="false"
+        app:chunkSpace="1dp"
+        app:chunkWidth="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchSoftTransition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="16dp"
+        android:switchPadding="10dp"
+        android:text="@string/soft_transition"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="16dp" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchRoundedCorners"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:switchPadding="10dp"
+        android:text="@string/rounded_corners"
+        app:layout_constraintEnd_toEndOf="@+id/switchSoftTransition"
+        app:layout_constraintTop_toBottomOf="@+id/switchSoftTransition" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchAlignTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:switchPadding="10dp"
+        android:text="@string/align_to_center"
+        app:layout_constraintEnd_toEndOf="@+id/switchRoundedCorners"
+        app:layout_constraintTop_toBottomOf="@+id/switchRoundedCorners" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
