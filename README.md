@@ -46,7 +46,8 @@ in XML
         app:chunkSpace="1dp"
         app:chunkWidth="2dp"
         app:chunkMaxHeight="48dp"
-        app:chunkMinHeight="2dp"/>
+        app:chunkMinHeight="2dp"
+        app:direction="leftToRight"/>
 ```
 Drawing
 
