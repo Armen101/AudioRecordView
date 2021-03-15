@@ -6,6 +6,8 @@
 
 **How to include?**
 
+[![](https://jitpack.io/v/Armen101/AudioRecordView.svg)](https://jitpack.io/#Armen101/AudioRecordView)
+
 Add the repository to your project build.gradle:
 ```
 allprojects {
