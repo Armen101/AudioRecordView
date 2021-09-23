@@ -10,16 +10,12 @@ fun Float.softTransition(compareWith: Float, allowedDiff: Float, scaleFactor: Fl
     if (scaleFactor == 0f) return this //avoid from ArithmeticException (divide by zero)
 
     var result = this
-    if (compareWith > this) {
-        if (compareWith / this > allowedDiff) {
-            val diff = this.coerceAtLeast(compareWith) - this.coerceAtMost(compareWith)
-            result += diff / scaleFactor
-        }
-    } else if (this > compareWith) {
-        if (this / compareWith > allowedDiff) {
-            val diff = this.coerceAtLeast(compareWith) - this.coerceAtMost(compareWith)
-            result -= diff / scaleFactor
-        }
+    if (compareWith > this && compareWith / this > allowedDiff) {
+        val diff = coerceAtLeast(compareWith) - coerceAtMost(compareWith)
+        result += diff / scaleFactor
+    } else if (this > compareWith && this / compareWith > allowedDiff) {
+        val diff = coerceAtLeast(compareWith) - coerceAtMost(compareWith)
+        result -= diff / scaleFactor
     }
     return result
 }
