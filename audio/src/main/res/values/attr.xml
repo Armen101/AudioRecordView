@@ -13,6 +13,10 @@
             <enum name="center" value="1" />
             <enum name="bottom" value="2" />
         </attr>
+        <attr name="direction" format="enum">
+            <enum name="rightToLeft" value="1" />
+            <enum name="leftToRight" value="2" />
+        </attr>
         <attr name="chunkSoftTransition" format="boolean" />
     </declare-styleable>
 

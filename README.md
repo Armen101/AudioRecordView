@@ -6,6 +6,8 @@
 
 **How to include?**
 
+[![](https://jitpack.io/v/Armen101/AudioRecordView.svg)](https://jitpack.io/#Armen101/AudioRecordView)
+
 Add the repository to your project build.gradle:
 ```
 allprojects {
@@ -18,7 +20,7 @@ allprojects {
 And add the library to your module build.gradle:
 ```
 dependencies {
-  implementation 'com.github.Armen101:AudioRecordView:1.0.2'
+  implementation 'com.github.Armen101:AudioRecordView:1.0.5'
 }
 ```
 Or Maven
@@ -26,7 +28,7 @@ Or Maven
 <dependency>
   <groupId>com.github.Armen101</groupId>
   <artifactId>AudioRecordView</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.5</version>
 </dependency>
 ```
 
@@ -46,7 +48,8 @@ in XML
         app:chunkSpace="1dp"
         app:chunkWidth="2dp"
         app:chunkMaxHeight="48dp"
-        app:chunkMinHeight="2dp"/>
+        app:chunkMinHeight="2dp"
+        app:direction="leftToRight"/>
 ```
 Drawing
 

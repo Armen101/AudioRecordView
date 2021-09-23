@@ -20,9 +20,15 @@ class AudioRecordView @JvmOverloads constructor(
         BOTTOM(2)
     }
 
+    enum class Direction(var value: Int) {
+        RightToLeft(1),
+        LeftToRight(2)
+    }
+
     private val maxReportableAmp = 22760f //effective size,  max fft = 32760
     private val uninitialized = 0f
     var chunkAlignTo = AlignTo.CENTER
+    var direction = Direction.LeftToRight
 
     private val chunkPaint = Paint()
     private var lastUpdateTime = 0L
@@ -67,7 +73,15 @@ class AudioRecordView @JvmOverloads constructor(
         invalidate()
     }
 
+    /**
+     * Call this function when you need to add a new chunk
+     * @param fft Used to draw the height of each chunk.
+     */
     fun update(fft: Int) {
+        if (height == 0) {
+            Log.w(LOG_TAG, "You must call the update fun when the view is displayed")
+            return
+        }
         try {
             handleNewFFT(fft)
             invalidate() // call to the onDraw function
@@ -103,9 +117,14 @@ class AudioRecordView @JvmOverloads constructor(
                 chunkWidth = getDimension(R.styleable.AudioRecordView_chunkWidth, chunkWidth)
                 chunkColor = getColor(R.styleable.AudioRecordView_chunkColor, chunkColor)
                 chunkAlignTo =
-                    when (getInt(R.styleable.AudioRecordView_chunkAlignTo, chunkAlignTo.ordinal)) {
+                    when (getInt(R.styleable.AudioRecordView_chunkAlignTo, chunkAlignTo.value)) {
                         AlignTo.BOTTOM.value -> AlignTo.BOTTOM
                         else -> AlignTo.CENTER
+                    }
+                direction =
+                    when (getInt(R.styleable.AudioRecordView_direction, direction.value)) {
+                        Direction.RightToLeft.value -> Direction.RightToLeft
+                        else -> Direction.LeftToRight
                     }
 
                 chunkSoftTransition =
@@ -130,7 +149,7 @@ class AudioRecordView @JvmOverloads constructor(
             chunkHeights.removeAt(0)
         } else {
             usageWidth += chunkHorizontalScale
-            chunkWidths.add(chunkWidths.size, usageWidth)
+            chunkWidths.add(usageWidth)
         }
 
         if (chunkMaxHeight == uninitialized) {
@@ -174,7 +193,6 @@ class AudioRecordView @JvmOverloads constructor(
             in 0..50 -> 1.6f
             in 50..100 -> 2.2f
             in 100..150 -> 2.8f
-            in 100..150 -> 3.4f
             in 150..200 -> 4.2f
             in 200..500 -> 4.8f
             else -> 5.4f
@@ -191,7 +209,7 @@ class AudioRecordView @JvmOverloads constructor(
     private fun drawAlignCenter(canvas: Canvas) {
         val verticalCenter = height / 2
         for (i in 0 until chunkHeights.size - 1) {
-            val chunkX = chunkWidths[i]
+            val chunkX = getChunkX(i)
             val startY = verticalCenter - chunkHeights[i] / 2
             val stopY = verticalCenter + chunkHeights[i] / 2
 
@@ -201,11 +219,23 @@ class AudioRecordView @JvmOverloads constructor(
 
     private fun drawAlignBottom(canvas: Canvas) {
         for (i in 0 until chunkHeights.size - 1) {
-            val chunkX = chunkWidths[i]
+            val chunkX = getChunkX(i)
             val startY = height.toFloat() - topBottomPadding
             val stopY = startY - chunkHeights[i]
 
             canvas.drawLine(chunkX, startY, chunkX, stopY, chunkPaint)
         }
+    }
+
+    private fun getChunkX(index: Int) = if (direction == Direction.RightToLeft) {
+        width - chunkWidths[index]
+    } else {
+        chunkWidths[index]
+    }
+
+    companion object {
+
+        private val LOG_TAG = AudioRecordView::class.java.simpleName
+
     }
 }
