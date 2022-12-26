@@ -7,10 +7,12 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import java.lang.Exception
+import androidx.annotation.MainThread
 import java.util.*
+import kotlin.math.floor
 
 
+@MainThread
 class AudioRecordView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
@@ -25,19 +27,8 @@ class AudioRecordView @JvmOverloads constructor(
         LeftToRight(2)
     }
 
-    private val maxReportableAmp = 22760f //effective size,  max fft = 32760
-    private val uninitialized = 0f
     var chunkAlignTo = AlignTo.CENTER
     var direction = Direction.LeftToRight
-
-    private val chunkPaint = Paint()
-    private var lastUpdateTime = 0L
-
-    private var usageWidth = 0f
-    private var chunkHeights = ArrayList<Float>()
-    private var chunkWidths = ArrayList<Float>()
-    private var topBottomPadding = 6.dp()
-
     var chunkSoftTransition = false
     var chunkColor = Color.RED
         set(value) {
@@ -50,7 +41,14 @@ class AudioRecordView @JvmOverloads constructor(
             field = value
         }
     var chunkSpace = 1.dp()
-    var chunkMaxHeight = uninitialized
+    var chunkMaxHeight = UNINITIALISED
+        get() {
+            val possibleMaxHeight = height - (topBottomPadding * 2)
+            if (field == UNINITIALISED || field > possibleMaxHeight) {
+                field = possibleMaxHeight
+            }
+            return field
+        }
     var chunkMinHeight = 3.dp()  // recommended size > 10 dp
     var chunkRoundedCorners = false
         set(value) {
@@ -61,15 +59,17 @@ class AudioRecordView @JvmOverloads constructor(
             }
             field = value
         }
+    private val chunks = Collections.synchronizedList<Chunk>(mutableListOf())
+    private val chunkPaint = Paint()
+    private var lastUpdateTime = 0L
+    private var topBottomPadding = 6.dp()
 
     init {
         attrs?.let { init(it) } ?: run { init() }
     }
 
     fun recreate() {
-        usageWidth = 0f
-        chunkWidths.clear()
-        chunkHeights.clear()
+        chunks.clear()
         invalidate()
     }
 
@@ -87,7 +87,7 @@ class AudioRecordView @JvmOverloads constructor(
             invalidate() // call to the onDraw function
             lastUpdateTime = System.currentTimeMillis()
         } catch (e: Exception) {
-            Log.e(AudioRecordView::class.simpleName, e.message ?: e.javaClass.simpleName)
+            Log.w(AudioRecordView::class.simpleName, e.message ?: e.javaClass.simpleName)
         }
     }
 
@@ -144,36 +144,30 @@ class AudioRecordView @JvmOverloads constructor(
         }
 
         val chunkHorizontalScale = chunkWidth + chunkSpace
-        val maxChunkCount = width / chunkHorizontalScale
-        if (chunkHeights.isNotEmpty() && chunkHeights.size >= maxChunkCount) {
-            chunkHeights.removeAt(0)
-        } else {
-            usageWidth += chunkHorizontalScale
-            chunkWidths.add(usageWidth)
+        val maxChunkCount = floor((width / chunkHorizontalScale).toDouble())
+        if (chunks.isNotEmpty() && chunks.size == maxChunkCount.toInt()) {
+            shiftX()
+            chunks.removeFirst()
         }
 
-        if (chunkMaxHeight == uninitialized) {
-            chunkMaxHeight = height - (topBottomPadding * 2)
-        } else if (chunkMaxHeight > height - (topBottomPadding * 2)) {
-            chunkMaxHeight = height - (topBottomPadding * 2)
-        }
+        val chunkX = getChunkX(chunkHorizontalScale)
 
         val verticalDrawScale = chunkMaxHeight - chunkMinHeight
         if (verticalDrawScale == 0f) {
             return
         }
 
-        val point = maxReportableAmp / verticalDrawScale
+        val point = MAX_REPORTABLE_AMP / verticalDrawScale
         if (point == 0f) {
             return
         }
 
         var fftPoint = fft / point
 
-        if (chunkSoftTransition && chunkHeights.isNotEmpty()) {
+        if (chunkSoftTransition && chunks.isNotEmpty()) {
             val updateTimeInterval = System.currentTimeMillis() - lastUpdateTime
             val scaleFactor = calculateScaleFactor(updateTimeInterval)
-            val prevFftWithoutAdditionalSize = chunkHeights.last() - chunkMinHeight
+            val prevFftWithoutAdditionalSize = chunks.last().height - chunkMinHeight
             fftPoint = fftPoint.softTransition(prevFftWithoutAdditionalSize, 2.2f, scaleFactor)
         }
 
@@ -184,8 +178,28 @@ class AudioRecordView @JvmOverloads constructor(
         } else if (fftPoint < chunkMinHeight) {
             fftPoint = chunkMinHeight
         }
+        chunks.add(Chunk(chunkX, fftPoint))
+    }
 
-        chunkHeights.add(chunkHeights.size, fftPoint)
+    private fun getChunkX(chunkHorizontalScale: Float): Float {
+        val theLastChunkPosition = if (chunks.isNotEmpty()) {
+            chunks.last().x
+        } else {
+            0f
+        }
+        return theLastChunkPosition + chunkHorizontalScale
+    }
+
+    private fun shiftX() {
+        if (chunks.isEmpty()) return
+        if (chunks.size <= 1) return
+
+        var currentX = chunks[0].x
+        for (i in 1 until chunks.size) {
+            val nextX = chunks[i].x
+            chunks[i].x = currentX
+            currentX = nextX
+        }
     }
 
     private fun calculateScaleFactor(updateTimeInterval: Long): Float {
@@ -200,42 +214,45 @@ class AudioRecordView @JvmOverloads constructor(
     }
 
     private fun drawChunks(canvas: Canvas) {
-        when (chunkAlignTo) {
-            AlignTo.BOTTOM -> drawAlignBottom(canvas)
-            else -> drawAlignCenter(canvas)
-        }
+        drawLine(
+            canvas = canvas,
+            calculateX = { x ->
+                if (direction == Direction.RightToLeft) {
+                    width - chunkWidth
+                } else {
+                    x
+                }
+            },
+            calculateY = { chunkHeight ->
+                if (chunkAlignTo == AlignTo.BOTTOM) {
+                    val startY = height.toFloat() - topBottomPadding
+                    val stopY = startY - chunkHeight
+                    Position(start = startY, end = stopY)
+                } else {
+                    val verticalCenter = height / 2
+                    val startY = verticalCenter - (chunkHeight / 2)
+                    val stopY = verticalCenter + (chunkHeight / 2)
+                    Position(start = startY, end = stopY)
+                }
+            }
+        )
     }
 
-    private fun drawAlignCenter(canvas: Canvas) {
-        val verticalCenter = height / 2
-        for (i in 0 until chunkHeights.size - 1) {
-            val chunkX = getChunkX(i)
-            val startY = verticalCenter - chunkHeights[i] / 2
-            val stopY = verticalCenter + chunkHeights[i] / 2
-
-            canvas.drawLine(chunkX, startY, chunkX, stopY, chunkPaint)
+    private fun drawLine(
+        canvas: Canvas,
+        calculateX: (Float) -> Float,
+        calculateY: (Float) -> Position
+    ) {
+        chunks.forEach { chunk ->
+            val chunkX = calculateX(chunk.x)
+            val yPosition = calculateY(chunk.height)
+            canvas.drawLine(chunkX, yPosition.start, chunkX, yPosition.end, chunkPaint)
         }
-    }
-
-    private fun drawAlignBottom(canvas: Canvas) {
-        for (i in 0 until chunkHeights.size - 1) {
-            val chunkX = getChunkX(i)
-            val startY = height.toFloat() - topBottomPadding
-            val stopY = startY - chunkHeights[i]
-
-            canvas.drawLine(chunkX, startY, chunkX, stopY, chunkPaint)
-        }
-    }
-
-    private fun getChunkX(index: Int) = if (direction == Direction.RightToLeft) {
-        width - chunkWidths[index]
-    } else {
-        chunkWidths[index]
     }
 
     companion object {
-
         private val LOG_TAG = AudioRecordView::class.java.simpleName
-
+        private const val UNINITIALISED = 0f
+        private const val MAX_REPORTABLE_AMP = 22760f //effective size,  max fft = 32760
     }
 }
